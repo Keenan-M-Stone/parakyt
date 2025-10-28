@@ -1,15 +1,14 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='dask_par_for_util',
+    name='parakyt',
     version='0.1.0',
     description='A utility for easily embarrassingly parallelizing for loops using Dask.',
     long_description='A context-managed utility built on Dask to simplify the parallel execution of functions over an iterable list.',
-    author='Your Name',
-    author_email='your.email@example.com',
-    url='https://github.com/yourusername/dask_par_for_util',
-    # List the actual Python files to be included
-    py_modules=['par_for'], 
+    author='Keenan Stone',
+    author_email='lemma137@gmail.com',
+    url='https://github.com/Keenan-M-Stone/parakyt',
+    packages=find_packages(), 
     install_requires=[
         # Core Dask package
         'dask>=2024.1.0', 
@@ -18,7 +17,6 @@ setup(
     ],
     classifiers=[
         'Programming Language :: Python :: 3',
-        'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Topic :: Software Development :: Libraries :: Python Modules',
     ],
