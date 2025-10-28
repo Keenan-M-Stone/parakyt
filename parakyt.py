@@ -24,17 +24,16 @@ def delayed_process_iteration(func: T_Callable, args: List[T_Delayed]) -> T_Dela
     # Call the function with arguments
     return func(*args)
 
-def par_for(
-    func: T_Callable,
-    iterable: Iterable[T_Delayed],
-    exec_mode: str = "distributed",
-    num_cores: Optional[int] = None
-) -> Optional[T_PktComputable]:
-    if num_cores is None:
-        num_cores = mp.cpu_count()
 
-    # Attempt to get an existing client
-    # Create temporary if none available
+def connect_create_client(
+        client: Any = None,
+        num_cores: Optional[int] = None,
+        exec_mode: str = "distributed"
+    ) -> Boolean:
+    # Attempt to get an existing client if none provided.
+    # Create temporary if none detected.
+    if client is not None:
+        return False
     f_close_client = True
     try:
         existing_client = ddist.get_client()
@@ -43,14 +42,29 @@ def par_for(
             f_close_client = False
         else:
             raise Exception("No client existing detected.")
-    except:
+    except Exception as e:
+        print(e)
         if exec_mode == "distributed":
             client = ddist.Client(processes=False)
         elif exec_mode == "threads":
             client = ddist.Client(scheduler='threads')
         else:
+            # Determine cpu count if none provided.
+            if num_cores is None:
+                num_cores = mp.cpu_count()
             client = ddist.Client(scheduler='processes', num_workers=num_cores)
+    return f_close_client
 
+
+def par_for(
+        func: T_Callable,
+        iterable: Iterable[T_Delayed],
+        exec_mode: str = "distributed",
+        num_cores: Optional[int] = None,
+        client: Any = None
+    ) -> Optional[T_PktComputable]:
+    # Execute parallelized for loop over `func` and .
+    f_close_client = connect_create_client(client, num_cores)
     results = None
     with dask.config.set(scheduler=client):
         tasks = [delayed_process_iteration(func, [item]) for item in iterable]
