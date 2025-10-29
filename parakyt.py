@@ -4,6 +4,17 @@
     Date:   7/7/23
     Desc:
         Embarassingly parallel for looping using dask.
+        Replaces cumbersome syntax in individual scripts
+        with a simple par_for call. No pre-requisites needed.
+        Creates temporary dask client if none detected.
+        Uses all available resources by default.
+    Usage:
+        results = parakyt.par_for(
+            <function applied to each obj in itterable>,
+            <itterable>,
+            <execution mode>,
+            <number of cores to use>
+        )
 '''
 import multiprocessing as mp
 from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
