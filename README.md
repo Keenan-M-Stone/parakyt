@@ -18,7 +18,7 @@ seamless execution, or detects and connects to an existing client if available.
 You can install parakyt via pip. This package relies on dask and distributed.
 ```
 git clone https://github.com/Keenan-M-Stone/parakyt.git 
-pip install parakyt
+pip install ./parakyt
 ```
 
 # 🎯 Motivation
