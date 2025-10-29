@@ -2,7 +2,8 @@
 
 **A utility for easily embarrassingly parallelizing for loops using Dask.**
 
-`parakyt` simplifies high-performance computing tasks by providing a single function,
+[parakyt](https://github.com/Keenan-M-Stone/parakyt.git) 
+simplifies high-performance computing tasks by providing a single function,
 `par_for`, that parallelizes iterations over an iterable list. 
 It automatically handles the creation and cleanup of a Dask distributed client for 
 seamless execution, or detects and connects to an existing client if available.
@@ -12,12 +13,11 @@ seamless execution, or detects and connects to an existing client if available.
 | Document Version  |  `1.0.0`  |
 | Software Version  |  `1.0.0`  |
 
-
 # 🚀 Installation
 
 You can install parakyt via pip. This package relies on dask and distributed.
 ```
-git clone ... 
+git clone https://github.com/Keenan-M-Stone/parakyt.git 
 pip install parakyt
 ```
 
@@ -37,47 +37,24 @@ and calls to `dask.compute` will greatly reduce performance. Further, more compl
 such as vector|vector operations, will be better suited by other utilizations of `dask`
 and `xarray`.
 
-# 💡 Quick Usage Example
+# 💡 Quick Usage Examples
 
 The primary function is par_for, which takes a callable function and an iterable of arguments.
-```python
-from parakyt import par_for
-import time
-import os
-
-# 1. Define a task (this simulates heavy, independent computation)
-def heavy_task(data_point: int) -> dict:
-    """A function that simulates work and returns a result."""
-    # Simulate a time-consuming process
-    time.sleep(0.1) 
-    
-    # Return some useful data and the worker PID for verification
-    return {
-        "input": data_point,
-        "result": data_point * data_point,
-        "worker_pid": os.getpid()
-    }
-
-# 2. Define the input data
-data_list = list(range(10))
-
-# 3. Execute the parallel loop
-# A temporary Dask cluster (using processes by default) is automatically
-# created and closed when the function completes.
-print("Starting parallel computation...")
-results = par_for(
-    func=heavy_task,
-    iterable=data_list
-)
-
-# 4. Print results (the order of execution is not guaranteed, 
-# but the order of the results matches the input iterable)
-print("\n--- Results ---")
-for res in results:
-    print(f"Input: {res['input']}, Result: {res['result']}, Process ID: {res['worker_pid']}")
-# The 'worker_pid' will likely show multiple process IDs, confirming parallel execution.
-```
+Refer to `parakyt/demo.py` and the internal `parakyt` demo function for demonstrations.
 
 # 🔗 Project Metadata
 
 Repository: https://github.com/Keenan-M-Stone/parakyt
+
+# 📓 Release Notes
+This version implements and exposes both the `par_for` function 
+for generic usage as well as `ClientContextManager` class, such 
+that developers may experiment with it and recommend revisions 
+ahead of next release (development expected to continue on `beta` 
+branch).
+
+# 🏆 Recognition of Contributers
+A similar script was originally developed for uses by the NOAA 
+verification group. Special thanks to Samantha Walley, Gavin Harrison,
+and Dana Strom for their helpful comments.
+

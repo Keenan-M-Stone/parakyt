@@ -16,11 +16,11 @@
             <number of cores to use>
         )
 '''
+import time
 import multiprocessing as mp
 from typing import Any, Callable, Iterable, List, Optional, Tuple, Union
 
 import dask
-import dask.config
 import dask.distributed as ddist
 from dask.delayed import Delayed
 from dask.distributed import Client
@@ -83,7 +83,7 @@ class ClientContextManager:
         
         # Ensure the client is valid before returning
         if self.client is None:
-             raise RuntimeError("Failed to connect to or create a Dask client.")
+            raise RuntimeError("Failed to connect to or create a Dask client.")
 
         return self.client
 
@@ -95,7 +95,7 @@ class ClientContextManager:
             # Only close the client if this context manager created it.
             try:
                 print("Closing temporary Dask client.")
-                self.client.close()
+                self.client.close(timeout=5)
                 self.client = None 
             except Exception as e:
                 # Print warning if closing fails, but proceed gracefully
@@ -153,27 +153,27 @@ def par_for(
 # --- Demonstration Functions ---
 # =====================================================================================================================    
 
-def example_task(n: int) -> int:
+def __example_task(n: int) -> int:
     """A sample CPU-bound task for demonstration."""
-    print(f"Processing number: {n}")
+    print(f"Processing number: {n}\n")
     # Simulate a time-consuming operation
     time.sleep(0.1) 
     return n * n
 
-def demo():
+def __demo():
     """Demonstrates usage of the refactored par_for function."""
     print("--- Dask Parallel For Loop Demonstration ---")
     
     # 1. Define the iterable list
     data_list = list(range(1, 11))
-    print(f"Input data: {data_list}")
+    print(f"Input data: {data_list}\n")
     
     # 2. Run the parallel loop using the default 'processes' mode
     print("\n--- Running in 'processes' mode (Multiprocessing) ---")
     
     # ClientContextManager will automatically create a process-based cluster and close it.
     computed_results = par_for(
-        func=example_task, 
+        func=__example_task, 
         iterable=data_list, 
         exec_mode="processes"
     )
@@ -186,7 +186,7 @@ def demo():
 
     # ClientContextManager will automatically create a thread-based cluster and close it.
     computed_results_threads = par_for(
-        func=example_task, 
+        func=__example_task, 
         iterable=data_list, 
         exec_mode="threads"
     )
@@ -199,4 +199,4 @@ def demo():
 if __name__ == "__main__":
     # Ensure multiprocessing is compatible if run interactively (like in a notebook)
     mp.freeze_support()
-    demo()
+    __demo()
